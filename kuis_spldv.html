@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis SPLDV — Metode Substitusi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #0e9f6e;
+    --teal-light: #d1fae5;
+    --teal-dark: #065f46;
+    --red-light: #fee2e2;
+    --red-dark: #991b1b;
+    --amber-light: #fef3c7;
+    --amber-dark: #92400e;
+    --blue-light: #dbeafe;
+    --blue-dark: #1e40af;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -1px rgba(0,0,0,.06);
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 50%, #fefce8 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+    color: var(--gray-800);
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+    max-width: 640px;
+    width: 100%;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 99px;
+    margin-bottom: 10px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gray-900);
+    line-height: 1.25;
+    margin-bottom: 6px;
+  }
+  .header p {
+    font-size: 14px;
+    color: var(--gray-600);
+  }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: var(--shadow-md);
+    max-width: 640px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  /* ── Top bar ── */
+  .top-bar {
+    padding: 20px 24px 0;
+  }
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .tp-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 99px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .tp1 { background: var(--blue-light); color: var(--blue-dark); }
+  .tp2 { background: var(--amber-light); color: var(--amber-dark); }
+  .tp3 { background: var(--teal-light); color: var(--teal-dark); }
+  .q-counter { font-size: 13px; color: var(--gray-400); font-weight: 500; }
+  .score-pill {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--teal-dark);
+    background: var(--teal-light);
+    padding: 3px 12px;
+    border-radius: 99px;
+  }
+
+  /* Progress */
+  .progress-track {
+    height: 5px;
+    background: var(--gray-100);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), #34d399);
+    border-radius: 99px;
+    transition: width .45s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ── Body ── */
+  .card-body { padding: 20px 24px 24px; }
+
+  .q-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 6px;
+  }
+  .q-text {
+    font-size: 15.5px;
+    font-weight: 600;
+    color: var(--gray-900);
+    line-height: 1.55;
+    margin-bottom: 4px;
+  }
+  .q-context {
+    font-size: 13.5px;
+    color: var(--gray-600);
+    line-height: 1.6;
+    margin-bottom: 18px;
+    padding: 10px 14px;
+    background: var(--gray-50);
+    border-left: 3px solid var(--gray-300);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: border-color .15s, background .15s, transform .1s;
+    background: #fff;
+    user-select: none;
+  }
+  .opt:hover { border-color: var(--teal); background: #f0fdf4; transform: translateX(2px); }
+  .opt.selected { border-color: var(--teal); background: #f0fdf4; }
+  .opt.correct  { border-color: var(--teal); background: var(--teal-light); }
+  .opt.wrong    { border-color: #ef4444; background: var(--red-light); }
+  .opt.reveal-correct { border-color: var(--teal); background: var(--teal-light); }
+
+  .opt-key {
+    width: 26px; height: 26px; flex-shrink: 0;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    transition: background .15s, color .15s;
+  }
+  .opt.selected .opt-key  { background: var(--teal); color: #fff; }
+  .opt.correct .opt-key   { background: var(--teal-dark); color: #fff; }
+  .opt.wrong .opt-key     { background: #dc2626; color: #fff; }
+  .opt.reveal-correct .opt-key { background: var(--teal-dark); color: #fff; }
+
+  .opt-text { font-size: 14px; color: var(--gray-800); line-height: 1.45; padding-top: 3px; }
+
+  /* Feedback */
+  .feedback {
+    display: none;
+    padding: 11px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: var(--teal-light);  color: var(--teal-dark);  border: 1px solid #6ee7b7; }
+  .feedback.bad { background: var(--red-light);   color: var(--red-dark);   border: 1px solid #fca5a5; }
+
+  /* Nav */
+  .nav { display: flex; justify-content: space-between; align-items: center; }
+  .btn {
+    padding: 10px 22px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-300);
+    background: #fff;
+    color: var(--gray-700);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  .btn:hover { background: var(--gray-100); }
+  .btn:active { transform: scale(.97); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+  .btn-primary {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #059669; border-color: #059669; }
+
+  /* ── Score Screen ── */
+  #score-screen { display: none; padding: 32px 24px; text-align: center; }
+  .trophy {
+    width: 80px; height: 80px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; margin: 0 auto 16px;
+  }
+  .trophy.gold   { background: #fef3c7; }
+  .trophy.silver { background: var(--gray-100); }
+  .trophy.bronze { background: #fde8d8; }
+
+  .score-big { font-size: 42px; font-weight: 700; color: var(--gray-900); line-height: 1; margin-bottom: 4px; }
+  .score-label { font-size: 14px; color: var(--gray-400); margin-bottom: 12px; }
+  .score-msg { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+  .score-sub { font-size: 14px; color: var(--gray-600); margin-bottom: 20px; }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat {
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    padding: 12px 8px;
+    border: 1px solid var(--gray-200);
+  }
+  .stat-num { font-size: 22px; font-weight: 700; color: var(--gray-900); }
+  .stat-lab { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+  .stat.green .stat-num { color: var(--teal-dark); }
+  .stat.red   .stat-num { color: #dc2626; }
+
+  .tp-summary {
+    display: flex; flex-direction: column; gap: 8px;
+    margin-bottom: 20px; text-align: left;
+  }
+  .tp-row {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--gray-700);
+  }
+  .tp-bar-track {
+    flex: 1; height: 6px; background: var(--gray-200);
+    border-radius: 99px; overflow: hidden;
+  }
+  .tp-bar-fill {
+    height: 100%; background: var(--teal);
+    border-radius: 99px; transition: width .6s .3s ease;
+  }
+  .tp-score { font-size: 12px; font-weight: 600; color: var(--gray-600); min-width: 30px; text-align: right; }
+
+  .btn-restart {
+    padding: 12px 32px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: var(--teal);
+    color: #fff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+  }
+  .btn-restart:hover { background: #059669; }
+  .btn-restart:active { transform: scale(.97); }
+
+  /* ── Start Screen ── */
+  #start-screen { padding: 32px 24px; text-align: center; }
+  .start-icon { font-size: 48px; margin-bottom: 12px; }
+  .start-title { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+  .start-desc { font-size: 14px; color: var(--gray-600); line-height: 1.6; margin-bottom: 20px; }
+  .info-grid {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 24px;
+  }
+  .info-card {
+    background: var(--gray-50); border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm); padding: 14px 8px;
+  }
+  .info-card .num { font-size: 24px; font-weight: 700; color: var(--teal-dark); }
+  .info-card .lab { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+  .tp-list { text-align: left; margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px; }
+  .tp-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px; color: var(--gray-700); line-height: 1.45;
+  }
+  .tp-dot {
+    width: 20px; height: 20px; flex-shrink: 0; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; margin-top: 1px;
+  }
+  .d1 { background: var(--blue-light); color: var(--blue-dark); }
+  .d2 { background: var(--amber-light); color: var(--amber-dark); }
+  .d3 { background: var(--teal-light); color: var(--teal-dark); }
+
+  .btn-start {
+    width: 100%; padding: 14px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: var(--teal);
+    color: #fff;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+  }
+  .btn-start:hover { background: #059669; }
+  .btn-start:active { transform: scale(.98); }
+
+  /* Divider */
+  .divider { height: 1px; background: var(--gray-100); margin: 0 24px; }
+
+  @media (max-width: 480px) {
+    body { padding: 16px 12px 40px; }
+    .header h1 { font-size: 21px; }
+    .card-body { padding: 16px 16px 20px; }
+    .top-bar { padding: 16px 16px 0; }
+    #start-screen, #score-screen { padding: 24px 16px; }
+    .q-text { font-size: 14.5px; }
+    .opt-text { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">📐 Matematika SMP</div>
+  <h1>Kuis SPLDV<br>Metode Substitusi</h1>
+  <p>Sistem Persamaan Linear Dua Variabel &middot; 20 Soal Pilihan Ganda</p>
+</div>
+
+<div class="card">
+
+  <!-- ═══════════════ START SCREEN ═══════════════ -->
+  <div id="start-screen">
+    <div class="start-icon">📝</div>
+    <div class="start-title">Siap Mengerjakan Kuis?</div>
+    <div class="start-desc">
+      Kuis ini menguji pemahamanmu tentang Sistem Persamaan Linear Dua Variabel menggunakan metode substitusi. Baca soal dengan teliti dan pilih jawaban yang paling tepat.
+    </div>
+    <div class="info-grid">
+      <div class="info-card"><div class="num">20</div><div class="lab">Soal</div></div>
+      <div class="info-card"><div class="num">3</div><div class="lab">Tujuan Pembelajaran</div></div>
+      <div class="info-card"><div class="num">5</div><div class="lab">Poin/Soal</div></div>
+    </div>
+    <div class="tp-list">
+      <div class="tp-item">
+        <div class="tp-dot d1">1</div>
+        <span><strong>TP 1</strong> (2 soal) — Mengidentifikasi bentuk umum SPLDV dan konsep dasar metode substitusi.</span>
+      </div>
+      <div class="tp-item">
+        <div class="tp-dot d2">2</div>
+        <span><strong>TP 2</strong> (12 soal) — Menyelesaikan SPLDV menggunakan metode substitusi secara sistematis.</span>
+      </div>
+      <div class="tp-item">
+        <div class="tp-dot d3">3</div>
+        <span><strong>TP 3</strong> (6 soal) — Menemukan solusi SPLDV dalam konteks nyata dan memeriksa kebenaran hasil.</span>
+      </div>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">Mulai Kuis →</button>
+  </div>
+
+  <!-- ═══════════════ QUIZ SCREEN ═══════════════ -->
+  <div id="quiz-screen" style="display:none;">
+    <div class="top-bar">
+      <div class="meta-row">
+        <span class="tp-badge tp1" id="tp-badge">TP 1</span>
+        <span class="q-counter" id="q-counter">1 / 20</span>
+        <span class="score-pill" id="score-pill">Skor: 0</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width:5%"></div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="q-num" id="q-num">Soal 1</div>
+      <div class="q-text" id="q-title"></div>
+      <div class="q-context" id="q-context" style="display:none"></div>
+      <p class="q-text" id="q-question" style="font-weight:500; font-size:14px; color:#374151; margin-bottom:14px;"></p>
+
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="nav">
+        <span style="font-size:12px;color:#9ca3af;">Pilih jawaban untuk lanjut</span>
+        <button class="btn btn-primary" id="next-btn" disabled onclick="nextQuestion()">Selanjutnya →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SCORE SCREEN ═══════════════ -->
+  <div id="score-screen">
+    <div class="trophy" id="trophy">🏆</div>
+    <div class="score-big" id="score-big">0</div>
+    <div class="score-label">dari 100 poin</div>
+    <div class="score-msg" id="score-msg"></div>
+    <div class="score-sub" id="score-sub"></div>
+
+    <div class="stat-grid">
+      <div class="stat green">
+        <div class="stat-num" id="stat-benar">0</div>
+        <div class="stat-lab">✓ Benar</div>
+      </div>
+      <div class="stat red">
+        <div class="stat-num" id="stat-salah">0</div>
+        <div class="stat-lab">✗ Salah</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-pct">0%</div>
+        <div class="stat-lab">Persentase</div>
+      </div>
+    </div>
+
+    <div style="font-size:13px;font-weight:600;color:#6b7280;text-align:left;margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em;">Capaian per Tujuan Pembelajaran</div>
+    <div class="tp-summary" id="tp-summary"></div>
+
+    <button class="btn-restart" onclick="restartQuiz()">🔄 Ulangi Kuis</button>
+  </div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    tp: 1, tpClass: "tp1",
+    title: "Harga Makanan di Kantin",
+    context: "Di kantin sekolah, Rina membeli 2 porsi nasi goreng dan 3 es teh seharga Rp39.000. Andi membeli 3 porsi nasi goreng dan 2 es teh seharga Rp41.000.",
+    question: "Jika harga satu porsi nasi goreng adalah x dan harga satu es teh adalah y, maka model SPLDV yang tepat adalah...",
+    opts: ["2x + 3y = 39.000 dan 3x + 2y = 41.000","2x + 3y = 41.000 dan 3x + 2y = 39.000","2x − 3y = 39.000 dan 3x − 2y = 41.000","x + y = 39.000"],
+    ans: 0,
+    exp: "✓ Benar! Rina: 2x + 3y = 39.000, Andi: 3x + 2y = 41.000. Koefisien sesuai jumlah porsi yang dibeli."
+  },
+  {
+    tp: 1, tpClass: "tp1",
+    title: "Parkiran Kendaraan",
+    context: "Di tempat parkir terdapat mobil dan motor sebanyak 30 kendaraan. Jumlah roda seluruh kendaraan adalah 86.",
+    question: "Jika mobil = x dan motor = y, model matematika yang benar adalah...",
+    opts: ["x + y = 30 dan 2x + 4y = 86","x + y = 30 dan 4x + 2y = 86","x − y = 30 dan 4x + 2y = 86","4x + 4y = 86"],
+    ans: 1,
+    exp: "✓ Benar! Jumlah kendaraan: x + y = 30. Roda: mobil punya 4 roda, motor 2 roda → 4x + 2y = 86."
+  },
+  {
+    tp: 2, tpClass: "tp2",
+    title: "Tiket Wisata",
+    context: "Sebuah tempat wisata menjual tiket dewasa dan tiket anak.\n4 tiket dewasa + 2 tiket anak = Rp220.000\n2 tiket dewasa + 3 tiket anak = Rp170.000",
+    question: "Harga satu tiket dewasa adalah...",
+    opts: ["Rp40.000","Rp50.000","Rp60.000","Rp70.000"],
+    ans: 1,
+    exp: "✓ Benar! Misalkan dewasa = x, anak = y. Eliminasi → x = 50.000. Harga tiket dewasa Rp50.000."
+  },
+  {
+    tp: 2, tpClass: "tp2",
+    title: "Penjualan Buku",
+    context: "3 buku tulis + 2 pulpen = Rp19.000\n2 buku tulis + 4 pulpen = Rp22.000",
+    question: "Harga satu pulpen adalah...",
+    opts: ["Rp2.000","Rp3.000","Rp4.000","Rp5.000"],
+    ans: 2,
+    exp: "✓ Benar! Dari persamaan: 3b + 2p = 19.000 dan 2b + 4p = 22.000. Substitusi → p = 4.000."
+  },
+  {
+    tp: 2, tpClass: "tp2",
+    title: "Paket Internet",
+    context: "2 paket data + 3 kartu perdana = Rp95.000\n3 paket data + 1 kartu perdana = Rp85.000",
+    question: "Harga satu paket data adalah...",
+    opts: ["Rp20.000","Rp25.000","Rp30.000","Rp35.000"],
+    ans: 1,
+    exp: "✓ Benar! Dari persamaan kedua: k = 85.000 − 3d. Substitusi ke persamaan pertama → d = 25.000."
+  },
+  {
+    tp: 2, tpClass: "tp2",
+    title: "Usia Kakak dan Adik",
+    context: "Jumlah usia kakak dan adik adalah 26 tahun.\nSelisih usia mereka adalah 4 tahun.",
+    question: "Usia kakak adalah...",
+    opts: ["11 tahun","13 tahun","15 tahun","17 tahun"],
+    ans: 2,
+    exp: "✓ Benar! k + a = 26 dan k − a = 4. Jumlahkan: 2k = 30 → k = 15 tahun."
+  },
+  {
+    tp: 2, tpClass: "tp2",
+    title: "Tarif Ojek Online",
+    context: "Perjalanan 5 km dikenakan Rp18.000.\nPerjalanan 8 km dikenakan Rp27.000.",
+    question: "Biaya tetap adalah...",
+    opts: ["Rp2.000","Rp3.000","Rp4.000","Rp5.000"],
+    ans: 1,
+    exp: "✓ Benar! Misal biaya tetap = a, per km = b. Dari 5b = 15.000 → b = 3.000. Masukkan: a + 5(3.000) = 18.000 → a = 3.000."
+  },
+  {
+    tp: 2, tpClass: "tp2",
+    title: "Penjualan Roti",
+    context: "4 roti + 3 susu = Rp47.000\n2 roti + 5 susu = Rp43.000",
+    question: "Harga satu roti adalah...",
+    opts: ["Rp6.000","Rp7.000","Rp8.000","Rp9.000"],
+    ans: 2,
+    exp: "✓ Benar! Dari sistem: 4r + 3s = 47.000 dan 2r + 5s = 43.000. Eliminasi → r = 8.000."
+  },
+  {
+    tp: 2, tpClass: "tp2",
+    title: "Pembelian Pulsa",
+    context: "2 paket 5GB + 3 paket 10GB = Rp145.000\n4 paket 5GB + 1 paket 10GB = Rp95.000",
+    question: "Harga paket 10 GB adalah...",
+    opts: ["Rp35.000","Rp40.000","Rp45.000","Rp50.000"],
+    ans: 0,
+    exp: "✓ Benar! Dari persamaan kedua: a = (95.000 − x)/4. Substitusi → x (10GB) = 35.000."
+  },
+  {
+    tp: 2, tpClass: "tp2",
+    title: "Penjualan Tiket Konser",
+    context: "3 tiket VIP + 5 tiket reguler = Rp1.150.000\n2 tiket VIP + 4 tiket reguler = Rp800.000",
+    question: "Harga tiket VIP adalah...",
+    opts: ["Rp150.000","Rp200.000","Rp250.000","Rp300.000"],
+    ans: 2,
+    exp: "✓ Benar! Dari sistem: eliminasi/substitusi → tiket reguler = 100.000, VIP = 250.000."
+  },
+  {
+    tp: 2, tpClass: "tp2",
+    title: "Tabungan Kakak dan Adik",
+    context: "Jumlah tabungan kakak dan adik Rp850.000.\nSelisih tabungan mereka Rp150.000.",
+    question: "Tabungan adik adalah...",
+    opts: ["Rp300.000","Rp350.000","Rp400.000","Rp500.000"],
+    ans: 1,
+    exp: "✓ Benar! k + a = 850.000 dan k − a = 150.000. Dari substitusi: a = (850.000 − 150.000)/2 = 350.000."
+  },
+  {
+    tp: 2, tpClass: "tp2",
+    title: "Tarif Laundry",
+    context: "Laundry 4 kg dikenakan Rp26.000.\nLaundry 7 kg dikenakan Rp38.000.",
+    question: "Biaya per kilogram adalah...",
+    opts: ["Rp3.000","Rp4.000","Rp5.000","Rp6.000"],
+    ans: 1,
+    exp: "✓ Benar! Selisih: (7−4) kg = 38.000 − 26.000 = 12.000 → per kg = 4.000."
+  },
+  {
+    tp: 2, tpClass: "tp2",
+    title: "Langganan Streaming",
+    context: "Selama 4 bulan:\n2 paket musik + 1 paket film = Rp380.000\n1 paket musik + 3 paket film = Rp720.000",
+    question: "Biaya satu paket film selama 4 bulan adalah...",
+    opts: ["Rp180.000","Rp200.000","Rp220.000","Rp240.000"],
+    ans: 2,
+    exp: "✓ Benar! Dari sistem: 2m + f = 380.000 dan m + 3f = 720.000. Substitusi → f = 220.000."
+  },
+  {
+    tp: 2, tpClass: "tp2",
+    title: "Tarif Parkir Bandara",
+    context: "Mobil A parkir 3 jam → membayar Rp35.000.\nMobil B parkir 5 jam → membayar Rp47.000.",
+    question: "Biaya masuk tetap adalah...",
+    opts: ["Rp10.000","Rp12.000","Rp15.000","Rp17.000"],
+    ans: 3,
+    exp: "✓ Benar! Selisih: 2 jam = 12.000 → per jam = 6.000. Biaya tetap = 35.000 − 3(6.000) = 17.000."
+  },
+  {
+    tp: 3, tpClass: "tp3",
+    title: "Belanja di Pasar",
+    context: "Ibu membeli 5 kg apel dan 2 kg jeruk seharga Rp110.000.\nAyah membeli 3 kg apel dan 4 kg jeruk seharga Rp102.000.",
+    question: "Harga 1 kg jeruk adalah...",
+    opts: ["Rp12.000","Rp15.000","Rp18.000","Rp20.000"],
+    ans: 2,
+    exp: "✓ Benar! Dari sistem: 5a + 2j = 110.000 dan 3a + 4j = 102.000. Substitusi → j = 18.000."
+  },
+  {
+    tp: 3, tpClass: "tp3",
+    title: "Sewa Sepeda",
+    context: "Jumlah sepeda yang disewa: 18 unit. Total biaya sewa: Rp540.000.\nSepeda dewasa: Rp40.000/unit, sepeda anak: Rp20.000/unit.",
+    question: "Jumlah sepeda dewasa yang disewa adalah...",
+    opts: ["7","9","11","13"],
+    ans: 1,
+    exp: "✓ Benar! d + a = 18 dan 40.000d + 20.000a = 540.000. Substitusi a = 18 − d → d = 9 unit."
+  },
+  {
+    tp: 3, tpClass: "tp3",
+    title: "Peternakan",
+    context: "Seorang peternak memiliki ayam dan kambing sebanyak 25 ekor.\nJumlah kaki seluruh hewan adalah 70.",
+    question: "Jumlah kambing adalah...",
+    opts: ["8","10","12","15"],
+    ans: 1,
+    exp: "✓ Benar! a + k = 25 dan 2a + 4k = 70. Dari a = 25 − k → 2(25−k) + 4k = 70 → k = 10 ekor."
+  },
+  {
+    tp: 3, tpClass: "tp3",
+    title: "Produksi Kaos",
+    context: "Total produksi kaos lengan panjang dan pendek: 60 buah.\nKeuntungan kaos panjang Rp35.000/buah, pendek Rp25.000/buah.\nTotal keuntungan: Rp1.800.000.",
+    question: "Jumlah kaos lengan panjang adalah...",
+    opts: ["20","25","30","35"],
+    ans: 2,
+    exp: "✓ Benar! p + q = 60 dan 35.000p + 25.000q = 1.800.000. Substitusi q = 60 − p → p = 30 buah."
+  },
+  {
+    tp: 3, tpClass: "tp3",
+    title: "Belanja Buah",
+    context: "3 kg mangga + 2 kg apel = Rp96.000\n2 kg mangga + 4 kg apel = Rp108.000",
+    question: "Harga 1 kg apel adalah...",
+    opts: ["Rp18.000","Rp20.000","Rp22.000","Rp24.000"],
+    ans: 0,
+    exp: "✓ Benar! Dari sistem: 3m + 2a = 96.000 dan 2m + 4a = 108.000. Substitusi → a = 18.000."
+  },
+  {
+    tp: 3, tpClass: "tp3",
+    title: "Penjualan Es Krim",
+    context: "Di acara bazar:\n5 es krim cokelat + 4 es krim vanila = Rp77.000\n3 es krim cokelat + 6 es krim vanila = Rp69.000",
+    question: "Harga satu es krim vanila adalah...",
+    opts: ["Rp6.000","Rp7.000","Rp8.000","Rp9.000"],
+    ans: 3,
+    exp: "✓ Benar! Dari sistem: 5c + 4v = 77.000 dan 3c + 6v = 69.000. Substitusi → v = 9.000."
+  }
+];
+
+const KEYS = ["A","B","C","D"];
+const TP_LABELS = { 1: "TP 1", 2: "TP 2", 3: "TP 3" };
+const TP_CLASS = { 1: "tp1", 2: "tp2", 3: "tp3" };
+
+let current = 0, score = 0, answered = false;
+let tpScores = { 1: {correct:0, total:0}, 2: {correct:0, total:0}, 3: {correct:0, total:0} };
+
+function startQuiz() {
+  document.getElementById("start-screen").style.display = "none";
+  document.getElementById("quiz-screen").style.display = "block";
+  loadQuestion();
+}
+
+function loadQuestion() {
+  answered = false;
+  const q = QUESTIONS[current];
+  const idx = current + 1;
+  const pct = Math.round((idx / QUESTIONS.length) * 100);
+
+  document.getElementById("progress-fill").style.width = pct + "%";
+  document.getElementById("q-counter").textContent = idx + " / " + QUESTIONS.length;
+  document.getElementById("score-pill").textContent = "Skor: " + score * 5;
+
+  const badge = document.getElementById("tp-badge");
+  badge.textContent = TP_LABELS[q.tp];
+  badge.className = "tp-badge " + TP_CLASS[q.tp];
+
+  document.getElementById("q-num").textContent = "Soal " + idx;
+  document.getElementById("q-title").textContent = q.title;
+
+  const ctx = document.getElementById("q-context");
+  if (q.context) {
+    ctx.style.display = "block";
+    ctx.innerHTML = q.context.replace(/\n/g, "<br>");
+  } else {
+    ctx.style.display = "none";
+  }
+  document.getElementById("q-question").textContent = q.question;
+
+  const fb = document.getElementById("feedback");
+  fb.className = "feedback";
+  fb.textContent = "";
+
+  const nextBtn = document.getElementById("next-btn");
+  nextBtn.disabled = true;
+  nextBtn.textContent = current < QUESTIONS.length - 1 ? "Selanjutnya →" : "Lihat Hasil";
+
+  const optsDiv = document.getElementById("options");
+  optsDiv.innerHTML = "";
+  q.opts.forEach((opt, i) => {
+    const el = document.createElement("div");
+    el.className = "opt";
+    el.innerHTML = `<span class="opt-key">${KEYS[i]}</span><span class="opt-text">${opt}</span>`;
+    el.onclick = () => pickAnswer(i, el);
+    optsDiv.appendChild(el);
+  });
+}
+
+function pickAnswer(i, el) {
+  if (answered) return;
+  answered = true;
+
+  const q = QUESTIONS[current];
+  const allOpts = document.querySelectorAll(".opt");
+  const fb = document.getElementById("feedback");
+
+  tpScores[q.tp].total++;
+
+  if (i === q.ans) {
+    score++;
+    tpScores[q.tp].correct++;
+    el.classList.add("correct");
+    fb.className = "feedback ok show";
+    fb.textContent = q.exp;
+  } else {
+    el.classList.add("wrong");
+    allOpts[q.ans].classList.add("reveal-correct");
+    fb.className = "feedback bad show";
+    fb.textContent = "✗ Kurang tepat. " + q.exp;
+  }
+
+  document.getElementById("next-btn").disabled = false;
+}
+
+function nextQuestion() {
+  current++;
+  if (current < QUESTIONS.length) {
+    loadQuestion();
+  } else {
+    showScore();
+  }
+}
+
+function showScore() {
+  document.getElementById("quiz-screen").style.display = "none";
+  const ss = document.getElementById("score-screen");
+  ss.style.display = "block";
+
+  const total = QUESTIONS.length;
+  const pct = Math.round((score / total) * 100);
+  const points = score * 5;
+
+  document.getElementById("score-big").textContent = points;
+  document.getElementById("stat-benar").textContent = score;
+  document.getElementById("stat-salah").textContent = total - score;
+  document.getElementById("stat-pct").textContent = pct + "%";
+
+  const trophy = document.getElementById("trophy");
+  let msg, sub;
+  if (pct === 100) {
+    trophy.textContent = "🏆"; trophy.className = "trophy gold";
+    msg = "Sempurna! Luar biasa! 🎉";
+    sub = "Kamu menjawab semua soal dengan benar. Hebat sekali!";
+  } else if (pct >= 80) {
+    trophy.textContent = "🥇"; trophy.className = "trophy gold";
+    msg = "Sangat Bagus!";
+    sub = "Pemahamanmu tentang SPLDV sudah sangat baik.";
+  } else if (pct >= 60) {
+    trophy.textContent = "🥈"; trophy.className = "trophy silver";
+    msg = "Cukup Baik!";
+    sub = "Terus berlatih dan kamu pasti bisa lebih baik lagi.";
+  } else {
+    trophy.textContent = "📚"; trophy.className = "trophy bronze";
+    msg = "Perlu Belajar Lagi";
+    sub = "Pelajari kembali materi SPLDV dan coba lagi ya!";
+  }
+  document.getElementById("score-msg").textContent = msg;
+  document.getElementById("score-sub").textContent = sub;
+
+  const tpSummary = document.getElementById("tp-summary");
+  tpSummary.innerHTML = "";
+  [
+    { num: 1, label: "TP 1 — Identifikasi SPLDV", cls: "tp1" },
+    { num: 2, label: "TP 2 — Metode Substitusi", cls: "tp2" },
+    { num: 3, label: "TP 3 — Konteks Nyata", cls: "tp3" }
+  ].forEach(tp => {
+    const d = tpScores[tp.num];
+    const p = d.total > 0 ? Math.round((d.correct / d.total) * 100) : 0;
+    tpSummary.innerHTML += `
+      <div class="tp-row">
+        <span style="min-width:180px;font-size:12.5px;">${tp.label}</span>
+        <div class="tp-bar-track"><div class="tp-bar-fill" style="width:${p}%"></div></div>
+        <span class="tp-score">${d.correct}/${d.total}</span>
+      </div>`;
+  });
+}
+
+function restartQuiz() {
+  current = 0; score = 0; answered = false;
+  tpScores = { 1: {correct:0,total:0}, 2: {correct:0,total:0}, 3: {correct:0,total:0} };
+  document.getElementById("score-screen").style.display = "none";
+  document.getElementById("quiz-screen").style.display = "block";
+  loadQuestion();
+}
+</script>
+</body>
+</html>
